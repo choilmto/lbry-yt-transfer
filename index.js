@@ -30,6 +30,5 @@ logger.remove(
 }));
 
 const config = Config();
-
 const lbryUpload = new LbryUpload();
 //const lbryTrnsf = new LbryTrnsf(config);
