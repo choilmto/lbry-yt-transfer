@@ -1,6 +1,7 @@
 const logger = require('winston');
 const fs = require('fs');
 const LbryTrnsf = require('./lib/LbryTrnsf');
+const LbryUpload = require('./lib/LbryUpload');
 
 const Config = require('./lib/config');
 
@@ -30,4 +31,5 @@ logger.remove(
 
 const config = Config();
 
-const lbryTrnsf = new LbryTrnsf(config);
+const lbryUpload = new LbryUpload();
+//const lbryTrnsf = new LbryTrnsf(config);
