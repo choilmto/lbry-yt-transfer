@@ -3,7 +3,7 @@
     "key": "youtube api key here"
   },
   "limiter": {
-    "concurrent_d" : 1,
-    "concurrent_u": 1 
+    "concurrent_d": 1,
+    "concurrent_u": 1
   }
 }
