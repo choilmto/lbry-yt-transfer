@@ -33,6 +33,11 @@ logger.remove(
   filename: './crash.log'
 }));
 
+var param = process.argv[2];
 const config = Config();
-const lbryUpload = new LbryUpload();
-//const lbryTrnsf = new LbryTrnsf(config);
+if (param !== undefined){
+if(param.indexOf('--berkeley') !== -1){ //for development
+  const lbryUpload = new LbryUpload();
+}}else{
+  const lbryTrnsf = new LbryTrnsf(config);
+}
