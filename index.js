@@ -40,4 +40,5 @@ if(param.indexOf('--berkeley') !== -1){ //for development
   const lbryUpload = new LbryUpload();
 }}else{
   const lbryTrnsf = new LbryTrnsf(config);
+  lbryTrnsf.resolveChannelPlaylist('UCiGpQ84lgDBJUQaU16nUHqg').then(console.log).catch(console.error);
 }

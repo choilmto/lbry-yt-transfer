@@ -3,7 +3,7 @@
     "key": "add api key here"
   },
   "limiter": {
-    "concurrent_d": 3,
-    "concurrent_u": 3
+    "concurrent_d": 5,
+    "concurrent_u": 1
   }
 }
