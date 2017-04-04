@@ -16,12 +16,13 @@
   "dependencies": {
     "bottleneck": "^1.15.1",
     "convict": "^2.0.0",
-    "googleapis": "^17.1.0",
+    "googleapis": "^18.0.0",
     "rethinkdb": "^2.3.3",
     "s3": "^4.4.0",
     "sqlite3": "^3.1.8",
     "winston": "^2.3.1",
-    "youtube-dl": "^1.11.1"
+    "youtube-dl": "^1.11.1",
+    "minimist": "^1.2.0"
   },
   "devDependencies": {
     "xo": "^0.18.0"

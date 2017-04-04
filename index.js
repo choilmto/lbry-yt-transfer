@@ -1,7 +1,9 @@
 const logger = require('winston');
 const fs = require('fs');
+const argv = require('minimist')(process.argv.slice(2));
 const LbryTrnsf = require('./lib/LbryTrnsf');
 const LbryUpload = require('./lib/LbryUpload');
+const BerkeleySync = require('./lib/BerkeleySync');
 
 const Config = require('./lib/config');
 
@@ -31,13 +33,25 @@ logger.remove(
   filename: './crash.log'
 }));
 
-var param = process.argv[2];
-const config = Config();
-if (param !== undefined) {
-  if (param.indexOf('--berkeley') !== -1) { //for development
-    const lbryUpload = new LbryUpload();
+if (argv.hasOwnProperty('berkeleySync')) {
+  const berkeleySync = new BerkeleySync();
+}
+else {
+  if (!argv.hasOwnProperty('channelid')) {
+    console.error('channelid unspecified. --channelid=youtubeChannelID')
+    return 1;
   }
-} else {
+
+  if (!argv.hasOwnProperty('tag') || argv.tag.search(/[^A-Za-z0-9\-]/g) !== -1) {
+    console.error('invalid custom tag. --tag=SomethingValid (a-Z, numbers and dashes)')
+    return 1;
+  }
+
+  const config = Config();
   const lbryTrnsf = new LbryTrnsf(config);
-  lbryTrnsf.resolveChannelPlaylist('UCiGpQ84lgDBJUQaU16nUHqg').then(console.log).catch(console.error);
+  lbryTrnsf.resolveChannelPlaylist(argv.channelid)
+    .then(channelID => {
+      const lbryUpload = new LbryUpload(channelID, argv.tag);
+    })
+    .catch(console.error);
 }
