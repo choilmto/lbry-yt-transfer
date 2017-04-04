@@ -9,12 +9,10 @@ const Config = require('./lib/config');
 const now = new Date();
 const t = now.toISOString().replace(/[:.]/gi, '-');
 const fname = './log/' + t + '.log';
-try
-{
+try {
   fs.mkdirSync('./log');
 }
-catch (e)
-{
+catch (e) {
 }
 
 logger.level = 'debug';
@@ -35,10 +33,11 @@ logger.remove(
 
 var param = process.argv[2];
 const config = Config();
-if (param !== undefined){
-if(param.indexOf('--berkeley') !== -1){ //for development
-  const lbryUpload = new LbryUpload();
-}}else{
+if (param !== undefined) {
+  if (param.indexOf('--berkeley') !== -1) { //for development
+    const lbryUpload = new LbryUpload();
+  }
+} else {
   const lbryTrnsf = new LbryTrnsf(config);
   lbryTrnsf.resolveChannelPlaylist('UCiGpQ84lgDBJUQaU16nUHqg').then(console.log).catch(console.error);
 }
