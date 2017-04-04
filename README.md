@@ -25,9 +25,19 @@ $ sudo apt-get install build-essential libssl-dev
 ```
 Clone the repo and install the modules...
 ```sh
-$ git clone https://github.com/filipnyquist/lbry-yt-transfer
+$ git clone https://github.com/lbryio/lbry-yt-transfer.git
 $ cd lbry-yt-transfer
 $ npm install
 ```
 
 More stuff to be added....
+
+Unfinished tasks:
+
+* wallet management
+* complete connection between downloader and uploader
+
+known issues:
+
+* concurrency problems in downloader
+* unparametrized variables (such as directories and limits)
