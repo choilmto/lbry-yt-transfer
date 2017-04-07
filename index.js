@@ -47,11 +47,17 @@ else {
     return 1;
   }
 
-  const config = Config();
-  const lbryTrnsf = new LbryTrnsf(config);
-  lbryTrnsf.resolveChannelPlaylist(argv.channelid)
-    .then(channelID => {
-      const lbryUpload = new LbryUpload(channelID, argv.tag);
-    })
-    .catch(console.error);
+  if (argv.hasOwnProperty('synconly')) {
+    const lbryUpload = new LbryUpload(channelID, argv.tag);
+  }
+  else {
+
+    const config = Config();
+    const lbryTrnsf = new LbryTrnsf(config);
+    lbryTrnsf.resolveChannelPlaylist(argv.channelid)
+      .then(channelID => {
+        const lbryUpload = new LbryUpload(channelID, argv.tag);
+      })
+      .catch(console.error);
+  }
 }
