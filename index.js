@@ -37,6 +37,7 @@ if (argv.hasOwnProperty('berkeleySync')) {
   const berkeleySync = new BerkeleySync();
 }
 else {
+  //UCiGpQ84lgDBJUQaU16nUHqg
   if (!argv.hasOwnProperty('channelid')) {
     console.error('channelid unspecified. --channelid=youtubeChannelID')
     return 1;
@@ -47,17 +48,14 @@ else {
     return 1;
   }
 
-  if (argv.hasOwnProperty('synconly')) {
-    const lbryUpload = new LbryUpload(channelID, argv.tag);
-  }
-  else {
-
-    const config = Config();
-    const lbryTrnsf = new LbryTrnsf(config);
-    lbryTrnsf.resolveChannelPlaylist(argv.channelid)
-      .then(channelID => {
-        const lbryUpload = new LbryUpload(channelID, argv.tag);
-      })
-      .catch(console.error);
-  }
+  const config = Config();
+  const lbryTrnsf = new LbryTrnsf(config);
+  lbryTrnsf.resolveChannelPlaylist(argv.channelid)
+    .then(channelID => {
+      console.log('syncing to LBRY... Please wait');
+      const lbryUpload = new LbryUpload(channelID, argv.tag, 10, "/mnt/bigdrive/videos/");
+      lbryUpload.performSyncronization();
+    })
+    .then(o => { console.log('Done syncing to LBRY!'); })
+    .catch(console.error);
 }
