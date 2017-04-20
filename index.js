@@ -54,7 +54,15 @@ else {
     .then(channelID => {
       console.log('syncing to LBRY... Please wait');
       const lbryUpload = new LbryUpload(channelID, argv.tag, 10, "/mnt/bigdrive/videos/");
-      lbryUpload.performSyncronization();
+      if (argv.hasOwnProperty('lbrychannel'))
+        lbryUpload.setChannel(argv.lbrychannel).then(result => {
+          if (result.owned === true)
+            lbryUpload.performSyncronization();
+          else
+            console.error('the specified channel is not currently owned');
+        }).catch(console.error);
+      else
+        lbryUpload.performSyncronization();
     })
     .then(o => { console.log('Done syncing to LBRY!'); })
     .catch(console.error);
