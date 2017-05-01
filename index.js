@@ -1,7 +1,7 @@
 const logger = require('winston');
 const fs = require('fs');
 const argv = require('minimist')(process.argv.slice(2));
-const LbryTrnsf = require('./lib/LbryTrnsf');
+const YoutubeDownload = require('./lib/YoutubeDownload');
 const LbryUpload = require('./lib/LbryUpload');
 const BerkeleySync = require('./lib/BerkeleySync');
 
@@ -33,37 +33,50 @@ logger.remove(
   filename: './crash.log'
 }));
 
+//TODO: deprecate this
 if (argv.hasOwnProperty('berkeleySync')) {
   const berkeleySync = new BerkeleySync();
 }
 else {
   //UCiGpQ84lgDBJUQaU16nUHqg
+  //require a channel id to sync
   if (!argv.hasOwnProperty('channelid')) {
     console.error('channelid unspecified. --channelid=youtubeChannelID')
     return 1;
   }
 
+  //require a tag for the claims
   if (!argv.hasOwnProperty('tag') || argv.tag.search(/[^A-Za-z0-9\-]/g) !== -1) {
     console.error('invalid custom tag. --tag=SomethingValid (a-Z, numbers and dashes)')
     return 1;
   }
 
-  const config = Config();
-  const lbryTrnsf = new LbryTrnsf(config);
-  lbryTrnsf.resolveChannelPlaylist(argv.channelid)
-    .then(channelID => {
-      console.log('syncing to LBRY... Please wait');
-      const lbryUpload = new LbryUpload(channelID, argv.tag, 10, "/mnt/bigdrive/videos/");
-      if (argv.hasOwnProperty('lbrychannel'))
-        lbryUpload.setChannel(argv.lbrychannel).then(result => {
-          if (result.owned === true)
-            lbryUpload.performSyncronization();
-          else
-            console.error('the specified channel is not currently owned');
-        }).catch(console.error);
-      else
-        lbryUpload.performSyncronization();
-    })
+  //initialize the downloader
+  const youtubeDownload = new YoutubeDownload(config);
+
+  //sync function for the channel
+  let syncToLBRY = new function (channelID) {
+    logger.info('Uploading to LBRY... Please wait');
+    logger.info('[YoutubeDownload] : Getting list of videos for channel %s', channelID);
+    //initialize the uploader
+    const lbryUpload = new LbryUpload(channelID, argv.tag, 10, "/mnt/bigdrive/videos/");
+    if (argv.hasOwnProperty('lbrychannel')) {
+      //if a channel is specified then check whethere or not we own it
+      lbryUpload.setChannel(argv.lbrychannel)
+        //if we own it then proceed with the upload
+        .then(lbryUpload.performSyncronization)
+        //otherwise don't
+        //TODO: perhaps create the channel if at this point it's not owned?
+        .catch(console.error);
+    }
+    else {
+      lbryUpload.performSyncronization();
+    }
+  }
+  //download the videos in the channel
+  youtubeDownload.resolveChannelPlaylist(argv.channelid)
+    //upload the videos to lbry
+    .then(syncToLBRY)
     .then(o => { console.log('Done syncing to LBRY!'); })
     .catch(console.error);
 }
