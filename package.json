@@ -1,6 +1,6 @@
 {
   "name": "lbry-yt-transfer",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A tool for uploading youtube videos to lbry",
   "main": "index.js",
   "scripts": {
@@ -17,14 +17,25 @@
     "bottleneck": "^1.15.1",
     "convict": "^2.0.0",
     "googleapis": "^18.0.0",
+    "minimist": "^1.2.0",
+    "request": "^2.81.0",
     "rethinkdb": "^2.3.3",
     "s3": "^4.4.0",
+    "sleep": "^5.1.1",
     "sqlite3": "^3.1.8",
     "winston": "^2.3.1",
     "youtube-dl": "^1.11.1",
-    "minimist": "^1.2.0"
+    "lbry-nodejs":"nikooo777/lbry-nodejs"
   },
   "devDependencies": {
     "xo": "^0.18.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lbryio/lbry-yt-transfer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lbryio/lbry-yt-transfer/issues"
+  },
+  "homepage": "https://github.com/lbryio/lbry-yt-transfer#readme"
 }

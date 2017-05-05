@@ -52,14 +52,13 @@ else {
   }
 
   //initialize the downloader
-  const youtubeDownload = new YoutubeDownload(config);
+  const youtubeDownload = new YoutubeDownload(Config());
 
   //sync function for the channel
   let syncToLBRY = new function (channelID) {
     logger.info('Uploading to LBRY... Please wait');
-    logger.info('[YoutubeDownload] : Getting list of videos for channel %s', channelID);
     //initialize the uploader
-    const lbryUpload = new LbryUpload(channelID, argv.tag, 10, "/mnt/bigdrive/videos/");
+    const lbryUpload = new LbryUpload(argv.channelid, argv.tag, 10, "/mnt/bigdrive/videos/");
     if (argv.hasOwnProperty('lbrychannel')) {
       //if a channel is specified then check whethere or not we own it
       lbryUpload.setChannel(argv.lbrychannel)
@@ -70,6 +69,7 @@ else {
         .catch(console.error);
     }
     else {
+      //if no channel is specified just proceed with the upload
       lbryUpload.performSyncronization();
     }
   }
