@@ -51,14 +51,27 @@ else {
     return 1;
   }
 
+  //account for user limits
+  let userLimit = -1;
+  if (argv.hasOwnProperty('limit')) {
+    if (argv.limit.search(/[^0-9]/g) !== -1) {
+      console.error('invalid limit. --limit=value')
+      return 1;
+    }
+    else {
+      userLimit = argv.limit;
+    }
+    return 1;
+  }
+
   //initialize the downloader
   const youtubeDownload = new YoutubeDownload(Config());
-
+  youtubeDownload.setLimit(userLimit);
   //sync function for the channel
   let syncToLBRY = new function (channelID) {
     logger.info('Uploading to LBRY... Please wait');
     //initialize the uploader
-    const lbryUpload = new LbryUpload(argv.channelid, argv.tag, 10, "/mnt/bigdrive/videos/");
+    const lbryUpload = new LbryUpload(argv.channelid, argv.tag, userLimit, "/mnt/bigdrive/videos/");
     if (argv.hasOwnProperty('lbrychannel')) {
       //if a channel is specified then check whethere or not we own it
       lbryUpload.setChannel(argv.lbrychannel)
@@ -75,6 +88,7 @@ else {
   }
   //download the videos in the channel
   youtubeDownload.resolveChannelPlaylist(argv.channelid)
+    //.then(console.log)
     //upload the videos to lbry
     .then(syncToLBRY)
     .then(o => { console.log('Done syncing to LBRY!'); })
