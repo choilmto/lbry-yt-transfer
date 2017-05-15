@@ -6,6 +6,7 @@ const LbryUpload = require('./lib/LbryUpload');
 const BerkeleySync = require('./lib/BerkeleySync');
 const lbry = require('lbry-nodejs');
 const Config = require('./lib/config');
+const sleep = require('sleep-promise');
 
 /* ---LOGGING--- */
 const now = new Date();
@@ -63,7 +64,11 @@ if (argv.hasOwnProperty('berkeleySync')) {
       if (argv.hasOwnProperty('claimchannel')) {
         //the user specified to claim the channel if it isn't existing
         //therefore we claim one for 1LBC
-        return lbry.channel_new(argv.lbrychannel, 1).then(fulfill).catch(reject);
+        return lbry.channel_new(argv.lbrychannel, 1)
+        //unfortunately the queues in the daemon are not yet merged so we must give it some time for the channel to go through. 15 seconds be it
+        .then(sleep(15000))
+        .then(fulfill)
+        .catch(reject);
         //We should technically wait for 1 block at this time otherwise the script will try to claim the channel again if restarted...
       }
       //logger.error("[YT-LBRY] the specified channel is not owned. Use --claimchannel");
