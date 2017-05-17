@@ -25,7 +25,8 @@
     "sqlite3": "^3.1.8",
     "winston": "^2.3.1",
     "youtube-dl": "^1.11.1",
-    "lbry-nodejs": "^1.0.2"
+    "lbry-nodejs": "^1.0.2",
+    "sleep-promise": "^2.0.0"
   },
   "devDependencies": {
     "xo": "^0.18.0"

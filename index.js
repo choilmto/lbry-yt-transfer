@@ -64,7 +64,7 @@ if (argv.hasOwnProperty('berkeleySync')) {
       if (argv.hasOwnProperty('claimchannel')) {
         //the user specified to claim the channel if it isn't existing
         //therefore we claim one for 1LBC
-        return lbry.channel_new(argv.lbrychannel, 1)
+        return lbry.channel_new(argv.lbrychannel, 0.01)
         //unfortunately the queues in the daemon are not yet merged so we must give it some time for the channel to go through. 15 seconds be it
         .then(sleep(15000))
         .then(fulfill)
