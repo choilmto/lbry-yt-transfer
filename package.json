@@ -1,6 +1,6 @@
 {
   "name": "lbry-yt-transfer",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A tool for uploading youtube videos to lbry",
   "main": "index.js",
   "scripts": {
@@ -25,7 +25,7 @@
     "sqlite3": "^3.1.8",
     "winston": "^2.3.1",
     "youtube-dl": "^1.11.1",
-    "lbry-nodejs": "^1.0.2",
+    "lbry-nodejs": "^1.0.4",
     "sleep-promise": "^2.0.0"
   },
   "devDependencies": {
