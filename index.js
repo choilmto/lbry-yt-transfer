@@ -32,100 +32,94 @@ logger.remove(
   filename: './crash.log'
 }));
 
-//TODO: deprecate this
-if (argv.hasOwnProperty('berkeleySync')) {
-  const berkeleySync = new BerkeleySync();
-} else {
-  //UCiGpQ84lgDBJUQaU16nUHqg
-  //require a channel id to sync
-  if (!argv.hasOwnProperty('channelid')) {
-    console.error('channelid unspecified. --channelid=youtubeChannelID')
-    return 1;
-  }
 
-  //require a tag for the claims
-  if (!argv.hasOwnProperty('tag') || argv.tag.search(/[^A-Za-z0-9\-]/g) !== -1) {
-    console.error('invalid custom tag. --tag=SomethingValid (a-Z, numbers and dashes)')
-    return 1;
-  }
+//UCiGpQ84lgDBJUQaU16nUHqg
+//require a channel id to sync
+if (!argv.hasOwnProperty('channelid')) {
+  console.error('channelid unspecified. --channelid=youtubeChannelID')
+  return 1;
+}
 
-  //account for user limits
-  let userLimit = -1;
-  if (argv.hasOwnProperty('limit')) {
-    if (argv.limit.search(/[^0-9]/g) !== -1) {
-      console.error('invalid limit. --limit=value')
-      return 1;
-    }
+//require a tag for the claims
+if (!argv.hasOwnProperty('tag') || argv.tag.search(/[^A-Za-z0-9\-]/g) !== -1) {
+  console.error('invalid custom tag. --tag=SomethingValid (a-Z, numbers and dashes)')
+  return 1;
+}
+
+//account for user limits
+let userLimit = -1;
+if (argv.hasOwnProperty('limit')) {
+  //apparently if you pass an integer as parameter it's not seen as a string
+  //if (argv.limit.search(/[^0-9]/g) !== -1) {
+  //  console.error('invalid limit. --limit=value')
+  //  return 1;
+  //}
+  if (argv.limit > 0)
     userLimit = argv.limit;
-  }
+}
 
-  let handleNonExistingChannel = function (error) {
-    return new Promise(function (fulfill, reject) {
-      if (argv.hasOwnProperty('claimchannel')) {
-        //the user specified to claim the channel if it isn't existing
-        //therefore we claim one for 1LBC
-        return lbry.channel_new(argv.lbrychannel, 0.01)
+let handleNonExistingChannel = function (error) {
+  return new Promise(function (fulfill, reject) {
+    if (argv.hasOwnProperty('claimchannel')) {
+      //the user specified to claim the channel if it isn't existing
+      //therefore we claim one for 1LBC
+      return lbry.channel_new(argv.lbrychannel, 0.01)
         //unfortunately the queues in the daemon are not yet merged so we must give it some time for the channel to go through. 15 seconds be it
         .then(sleep(15000))
         .then(fulfill)
         .catch(reject);
-        //We should technically wait for 1 block at this time otherwise the script will try to claim the channel again if restarted...
-      }
-      //logger.error("[YT-LBRY] the specified channel is not owned. Use --claimchannel");
-      //throw new Error("the specified channel is not owned. Use --claimchannel");
-      reject(new Error("the specified channel is not owned. Use --claimchannel"));
-    })
-  };
+      //We should technically wait for 1 block at this time otherwise the script will try to claim the channel again if restarted...
+    }
+    //logger.error("[YT-LBRY] the specified channel is not owned. Use --claimchannel");
+    //throw new Error("the specified channel is not owned. Use --claimchannel");
+    reject(new Error("the specified channel is not owned. Use --claimchannel"));
+  })
+};
 
-  let syncToLBRY = function (channelID) {
-    return new Promise(function (fulfill, reject) {
-      logger.info('Uploading to LBRY... Please wait');
-      //initialize the uploader
-      const lbryUpload = new LbryUpload(argv.channelid, argv.tag, userLimit, "/mnt/bigdrive/videos/");
-      if (argv.hasOwnProperty('lbrychannel')) {
-        //if a channel is specified then check whethere or not we own it
-        return lbryUpload.setChannel(argv.lbrychannel)
-          //take care of the case where we don't own the channel
-          .catch(handleNonExistingChannel)
-          //if we own it then proceed with the upload
-          .then(lbryUpload.performSyncronization)
-          .then(fulfill)
-          .catch(reject);
-      } else {
-        //if no channel is specified just proceed with the upload
-        return lbryUpload.performSyncronization();
-      }
-    });
-  };
+let syncToLBRY = function (channelID) {
+  return new Promise(function (fulfill, reject) {
+    logger.info('Uploading to LBRY... Please wait');
+    //initialize the uploader
+    //const lbryUpload = new LbryUpload(argv.channelid, argv.tag, userLimit, "/mnt/bigdrive/videos/");
+    const lbryUpload = new BerkeleySync(argv.channelid, argv.tag, 2, "/mnt/bigdrive/videos/");
+    if (argv.hasOwnProperty('lbrychannel')) {
+      //if a channel is specified then check whethere or not we own it
+      return lbryUpload.setChannel(argv.lbrychannel)
+        //take care of the case where we don't own the channel
+        .catch(handleNonExistingChannel)
+        //if we own it then proceed with the upload
+        .then(lbryUpload.performSyncronization)
+        .then(fulfill)
+        .catch(reject);
+    } else {
+      //if no channel is specified just proceed with the upload
+      return lbryUpload.performSyncronization();
+    }
+  });
+};
 
-  let runIfUp = function (daemonStatus) {
-    return new Promise(function (fulfill, reject) {
-      if (daemonStatus.hasOwnProperty('result') && daemonStatus.result.is_running === true) {
-        //initialize the downloader
-        const youtubeDownload = new YoutubeDownload(Config());
-        youtubeDownload.setLimit(userLimit);
-        //sync function for the channel
+let runIfUp = function (daemonStatus) {
+  return new Promise(function (fulfill, reject) {
+    if (daemonStatus.hasOwnProperty('result') && daemonStatus.result.is_running === true) {
+      //sync function for the channel
 
-        //download the videos in the channel
-        return youtubeDownload.resolveChannelPlaylist(argv.channelid)
-          //upload the videos to lbry
-          .then(syncToLBRY)
-          .then(o => {
-            logger.info('[YT-LBRY] Done syncing to LBRY!');
-          })
-          .catch(reject);
-      }
-      return reject("[YT-LBRY] The daemon is not running!");
-    })
-  };
-  //query the daemon for its current status
-  lbry.status()
-    //if it's up then launch the sync process
-    .then(runIfUp)
-    //daemon is not up OR
-    //Youtube downloader API failed OR
-    //No youtube Uploads were found OR
-    //Failure while downloading videos OR
-    //probably more but it's too deep!
-    .catch(console.error);
-}
+      //download the videos in the channel
+      return syncToLBRY(argv.channelid)
+        .then(o => {
+          logger.info('[YT-LBRY] Done syncing to LBRY!');
+        })
+        .catch(reject);
+    }
+    return reject("[YT-LBRY] The daemon is not running!");
+  })
+};
+//query the daemon for its current status
+lbry.status()
+  //if it's up then launch the sync process
+  .then(runIfUp)
+  //daemon is not up OR
+  //Youtube downloader API failed OR
+  //No youtube Uploads were found OR
+  //Failure while downloading videos OR
+  //probably more but it's too deep!
+  .catch(console.error);
