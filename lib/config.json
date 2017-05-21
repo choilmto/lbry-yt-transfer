@@ -1,9 +1,0 @@
-{
-  "youtube_api": {
-    "key": "add api key here"
-  },
-  "limiter": {
-    "concurrent_d": 5,
-    "concurrent_u": 1
-  }
-}
