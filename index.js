@@ -81,7 +81,7 @@ let syncToLBRY = function (channelID) {
     logger.info('Uploading to LBRY... Please wait');
     //initialize the uploader
     //const lbryUpload = new LbryUpload(argv.channelid, argv.tag, userLimit, "/mnt/bigdrive/videos/");
-    const lbryUpload = new BerkeleySync(argv.channelid, argv.tag, 2, "/mnt/bigdrive/videos/");
+    const lbryUpload = new BerkeleySync(argv.channelid, argv.tag, userLimit, "/mnt/bigdrive/videos/");
     if (argv.hasOwnProperty('lbrychannel')) {
       //if a channel is specified then check whethere or not we own it
       return lbryUpload.setChannel(argv.lbrychannel)
