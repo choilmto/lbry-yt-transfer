@@ -17,16 +17,17 @@
     "bottleneck": "^1.15.1",
     "convict": "^2.0.0",
     "googleapis": "^18.0.0",
+    "lbry-nodejs": "^1.0.4",
     "minimist": "^1.2.0",
     "request": "^2.81.0",
     "rethinkdb": "^2.3.3",
     "s3": "^4.4.0",
     "sleep": "^5.1.1",
+    "sleep-promise": "^2.0.0",
     "sqlite3": "^3.1.8",
     "winston": "^2.3.1",
     "youtube-dl": "^1.11.1",
-    "lbry-nodejs": "^1.0.4",
-    "sleep-promise": "^2.0.0"
+    "ytdl-core": "git://github.com/cacheflow/node-ytdl-core.git#patch-video-download-failure-edge-case"
   },
   "devDependencies": {
     "xo": "^0.18.0"
