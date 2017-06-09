@@ -17,7 +17,7 @@
     "bottleneck": "^1.15.1",
     "convict": "^2.0.0",
     "googleapis": "^18.0.0",
-    "lbry-nodejs": "^1.0.6",
+    "lbry-nodejs": "https://github.com/nikooo777/lbry-nodejs",
     "minimist": "^1.2.0",
     "request": "^2.81.0",
     "rethinkdb": "^2.3.3",

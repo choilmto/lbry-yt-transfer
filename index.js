@@ -62,6 +62,7 @@ let handleNonExistingChannel = function (error) {
     if (argv.hasOwnProperty('claimchannel')) {
       //the user specified to claim the channel if it isn't existing
       //therefore we claim one for 1LBC
+      logger.info("[YT-LBRY] The channel is not yet owned. Claiming it...");
       return lbry.channel_new(argv.lbrychannel, 0.01)
         //unfortunately the queues in the daemon are not yet merged so we must give it some time for the channel to go through. 15 seconds be it
         .then(sleep(15000))
@@ -78,6 +79,7 @@ let syncToLBRY = function (channelID) {
   return new Promise(function (fulfill, reject) {
     logger.info('Uploading to LBRY... Please wait');
     //initialize the uploader
+    
     const lbryUpload = new LbryUpload(argv.channelid, argv.tag, userLimit, "/mnt/bigdrive/videos/");
     if (argv.hasOwnProperty('lbrychannel')) {
       //if a channel is specified then check whethere or not we own it
