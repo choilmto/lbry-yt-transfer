@@ -79,8 +79,8 @@ let syncToLBRY = function (channelID) {
   return new Promise(function (fulfill, reject) {
     logger.info('Uploading to LBRY... Please wait');
     //initialize the uploader
-    
-    const lbryUpload = new LbryUpload(argv.channelid, argv.tag, userLimit, "/mnt/bigdrive/videos/");
+
+    const lbryUpload = new LbryUpload(argv.channelid, argv.tag, userLimit, "/mnt/bigdrive/videos/", null, null);
     if (argv.hasOwnProperty('lbrychannel')) {
       //if a channel is specified then check whethere or not we own it
       return lbryUpload.setChannel(argv.lbrychannel)
