@@ -121,6 +121,7 @@ let runIfUp = function (daemonStatus) {
 lbry.status()
   //if it's up then launch the sync process
   .then(runIfUp)
+  .then(logger.info)
   //daemon is not up OR
   //Youtube downloader API failed OR
   //No youtube Uploads were found OR
