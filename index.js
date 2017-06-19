@@ -65,7 +65,11 @@ let handleNonExistingChannel = function (error) {
       logger.info("[YT-LBRY] The channel is not yet owned. Claiming it...");
       return lbry.channel_new(argv.lbrychannel, 0.01)
         //unfortunately the queues in the daemon are not yet merged so we must give it some time for the channel to go through. 15 seconds be it
-        .then(sleep(15000))
+        .then(r => {
+          if (r.hasOwnProperty('error'))
+            return Promise.reject(r);
+          sleep(15000);
+        })
         .then(fulfill)
         .catch(reject);
       //We should technically wait for 1 block at this time otherwise the script will try to claim the channel again if restarted...
