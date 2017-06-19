@@ -35,13 +35,13 @@ logger.remove(
 //UCiGpQ84lgDBJUQaU16nUHqg
 //require a channel id to sync
 if (!argv.hasOwnProperty('channelid')) {
-  console.error('channelid unspecified. --channelid=youtubeChannelID')
+  logger.error('channelid unspecified. --channelid=youtubeChannelID')
   return 1;
 }
 
 //require a tag for the claims
 if (!argv.hasOwnProperty('tag') || argv.tag.search(/[^A-Za-z0-9\-]/g) !== -1) {
-  console.error('invalid custom tag. --tag=SomethingValid (a-Z, numbers and dashes)')
+  logger.error('invalid custom tag. --tag=SomethingValid (a-Z, numbers and dashes)')
   return 1;
 }
 
@@ -131,4 +131,4 @@ lbry.status()
   //No youtube Uploads were found OR
   //Failure while downloading videos OR
   //probably more but it's too deep!
-  .catch(console.error);
+  .catch(logger.error);
