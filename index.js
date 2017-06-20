@@ -34,13 +34,13 @@ logger.remove(
 //UCiGpQ84lgDBJUQaU16nUHqg
 //require a channel id to sync
 if (!argv.hasOwnProperty('channelid')) {
-  console.error('channelid unspecified. --channelid=youtubeChannelID')
+  logger.error('channelid unspecified. --channelid=youtubeChannelID')
   return 1;
 }
 
 //require a tag for the claims
 if (!argv.hasOwnProperty('tag') || argv.tag.search(/[^A-Za-z0-9\-]/g) !== -1) {
-  console.error('invalid custom tag. --tag=SomethingValid (a-Z, numbers and dashes)')
+  logger.error('invalid custom tag. --tag=SomethingValid (a-Z, numbers and dashes)')
   return 1;
 }
 
@@ -64,7 +64,11 @@ let handleNonExistingChannel = function (error) {
       logger.info("[YT-LBRY] The channel is not yet owned. Claiming it...");
       return lbry.channel_new(argv.lbrychannel, 0.01)
         //unfortunately the queues in the daemon are not yet merged so we must give it some time for the channel to go through. 15 seconds be it
-        .then(sleep(15000))
+        .then(r => {
+          if (r.hasOwnProperty('error'))
+            return Promise.reject(r);
+          sleep(15000);
+        })
         .then(fulfill)
         .catch(reject);
       //We should technically wait for 1 block at this time otherwise the script will try to claim the channel again if restarted...
@@ -78,9 +82,7 @@ let syncToLBRY = function (channelID) {
   return new Promise(function (fulfill, reject) {
     logger.info('Uploading to LBRY... Please wait');
     //initialize the uploader
-    
-    //const lbryUpload = new LbryUpload(argv.channelid, argv.tag, userLimit, "/mnt/bigdrive/videos/");
-    const lbryUpload = new BerkeleySync(argv.channelid, argv.tag, userLimit, "/mnt/bigdrive/videos/");
+    const lbryUpload = new BerkeleySync(argv.channelid, argv.tag, userLimit, "/mnt/bigdrive/videos/", null, null);
     if (argv.hasOwnProperty('lbrychannel')) {
       //if a channel is specified then check whethere or not we own it
       return lbryUpload.setChannel(argv.lbrychannel)
@@ -116,9 +118,10 @@ let runIfUp = function (daemonStatus) {
 lbry.status()
   //if it's up then launch the sync process
   .then(runIfUp)
+  .then(logger.info)
   //daemon is not up OR
   //Youtube downloader API failed OR
   //No youtube Uploads were found OR
   //Failure while downloading videos OR
   //probably more but it's too deep!
-  .catch(console.error);
+  .catch(logger.error);
