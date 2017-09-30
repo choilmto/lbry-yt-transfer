@@ -39,6 +39,11 @@ if (!argv.hasOwnProperty('channelid')) {
   return 1;
 }
 
+//TODO: add checks for price and address
+///////////////
+///////////////
+
+
 //require a tag for the claims
 if (!argv.hasOwnProperty('tag') || argv.tag.search(/[^A-Za-z0-9\-]/g) !== -1) {
   logger.error('invalid custom tag. --tag=SomethingValid (a-Z, numbers and dashes)')
@@ -68,6 +73,7 @@ let handleNonExistingChannel = function (error) {
         .then(r => {
           if (r.hasOwnProperty('error'))
             return Promise.reject(r);
+            logger.info("[%s] Sleeping 15 seconds...");
           sleep(15000);
         })
         .then(fulfill)
