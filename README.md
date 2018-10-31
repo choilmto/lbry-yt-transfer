@@ -8,7 +8,7 @@ This is a custom made software created to help with the mirroring of a youtube c
 
 This tool needs [Node.js](https://nodejs.org/) v6+ to run.
 
-Install Node.js and NPM if it isn´t installed.
+Install Node.js and NPM if it isn't installed.
 
 ```sh
 $ cd ~
@@ -38,7 +38,7 @@ Unfinished tasks:
 * wallet management
 * complete connection between downloader and uploader
 
-known issues:
+Known issues:
 
 * concurrency problems in downloader
 * unparametrized variables (such as directories and limits)
